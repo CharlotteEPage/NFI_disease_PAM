@@ -1,0 +1,107 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+Growth anomalies
+
+```{r}
+
+library(ggplot2)
+library(cowplot)
+
+```
+
+Montipora GA
+```{r}
+
+load(file = "Monti_GA_Sept2022.rda")
+str(Monti_GA_Sept2022)
+
+a <- ggplot(Monti_GA_Sept2022, aes(Disease_group,Avg))+
+  geom_boxplot(fill = "#ee9349", colour = "#ee9349", alpha = 0.5) +
+  #scale_fill_manual(color = "#ee9349") +
+  scale_y_continuous(limits = c(0.3,0.7,0.05)) +
+  theme_bw() #+ 
+  #ggtitle("Monti GA September 2022")
+
+# Stats 
+
+
+
+```
+
+Acropora GA 
+
+April 2021 
+
+```{r}
+load(file = "Acro_GA_April2021.rda")
+str(Acro_GA_April2021)
+
+b <- ggplot(Acro_GA_April2021, aes(Sample_ID,mean_Y))+
+  geom_boxplot(fill = "#a93749", colour = "#a93749", alpha = 0.5) +
+  #scale_fill_manual(color = "#ee9349") +
+  scale_y_continuous(limits = c(0.3,0.7,0.05)) +
+  theme_bw() #+
+  #ggtitle("Acro GA April 2021")
+
+```
+
+April 2022 
+
+```{r}
+
+load(file = "Acro_GA_April2022.rda")
+str(Acro_GA_April2022)
+
+c <- ggplot(Acro_GA_April2022, aes(Disease_group,Avg))+
+  geom_boxplot(fill = "#a93749", colour = "#a93749", alpha = 0.5) +
+  scale_y_continuous(limits = c(0.3,0.7,0.05)) +
+  theme_bw() #+ 
+ # ggtitle("Acro GA April 2022")
+
+```
+
+September 2022
+
+```{r}
+
+load(file = "Acro_GA_Sept2022.rda")
+str(Acro_GA_Sept2022)
+
+d <- ggplot(Acro_GA_Sept2022, aes(Disease_group,Avg))+
+  geom_boxplot(fill = "#a93749", colour = "#a93749", alpha = 0.5) +
+  scale_y_continuous(limits = c(0.3,0.7,0.05)) +
+  theme_bw() #+ 
+  #ggtitle("Acro GA September 2022")
+
+d
+
+```
+
+December 2022
+
+
+```{r}
+
+load(file = "Acro_GA_Dec2022.rda")
+str(Acro_GA_Sept2022)
+
+e <- ggplot(Acro_GA_Dec2022, aes(Disease_group,Avg))+
+  geom_boxplot(fill = "#a93749", colour = "#a93749", alpha = 0.5) +
+  scale_y_continuous(limits = c(0.3,0.7,0.05)) +
+  theme_bw() #+ 
+  #ggtitle("Acro GA September 2022")
+
+e
+
+```
+
+```{r}
+GA_plot <- plot_grid(
+  a, b, c, d,
+  labels = "AUTO", ncol = 1
+)
+```
+
+
