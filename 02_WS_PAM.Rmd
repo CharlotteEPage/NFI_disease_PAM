@@ -1,0 +1,390 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+White Syndromes 
+
+```{r}
+
+library(ggplot2)
+library(cowplot)
+library(tidyr)
+library(multcomp)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(MuMIn)
+library(DHARMa)
+
+```
+
+
+Montipora WS 
+
+April 2021 
+
+```{r}
+
+load(file = "Monti_WS_April2021.rda")
+str(Monti_WS_April2021)
+
+ggplot(Monti_WS_April2021, aes(Sample_ID,mean_Y)) +
+  geom_boxplot(fill = "#02b6b4", colour = "#02b6b4", alpha = 0.5) +
+  #scale_fill_manual(color = "#ee9349") +
+  scale_y_continuous(limits = c(0,0.7,0.05)) +
+  theme_bw() #+ 
+  #ggtitle("Monti GA September 2022")
+
+# Stats 
+
+# Summary statistics (mean and standard error of each group)
+
+ Monti_WS_April2021 %>% group_by(Sample_ID) %>%
+  summarise(
+    Yield = mean(mean_Y),
+    sd = sd(mean_Y),
+    n = n(),
+    se = sd / sqrt(n)
+  )
+
+# Anova to test for differences between groups 
+ 
+mod1 <- lm(mean_Y ~ Sample_ID, data = Monti_WS_April2021)
+plot(mod1) # fine
+summary(mod1)
+
+anova(mod1)
+
+anova(mod1, test = "Chisq") %>% as.data.frame() %>% write.csv(file = "Monti_WS_April2021_anova.csv")
+summary(mod1)$adj.r.squared
+
+
+# Tukey HSD test:
+emmeans(mod1, list(pairwise ~ Sample_ID), adjust = "tukey")
+
+
+```
+
+September 2022 
+
+April 2021 
+
+```{r}
+
+load(file = "Monti_WS_Sept2022.rda")
+str(Monti_WS_Sept2022)
+
+ggplot(Monti_WS_Sept2022, aes(Disease_group,Avg)) +
+  geom_boxplot(fill = "#02b6b4", colour = "#02b6b4", alpha = 0.5) +
+  #scale_fill_manual(color = "#ee9349") +
+  scale_y_continuous(limits = c(0,0.7,0.05)) +
+  theme_bw()
+
+# Stats 
+
+#Summary statistics (mean and standard error of each group)
+
+Monti_WS_Sept2022 %>% group_by(Disease_group) %>%
+  summarise(
+    Yield = mean(Avg),
+    sd = sd(Avg),
+    n = n(),
+    se = sd / sqrt(n)
+  )
+
+# Random effect of coral ID to test for differences between groups 
+str(Monti_WS_Sept2022)
+ 
+mod2 <- lmer(Avg ~ Disease_group + (1|Coral_ID), data = Monti_WS_Sept2022)
+plot(mod2) # fine
+summary(mod2)
+
+simulationOutput <- simulateResiduals(fittedModel = mod2, plot = F)
+plot(simulationOutput)
+
+anova(mod2)
+
+anova(mod2, test = "Chisq") %>% as.data.frame() %>% write.csv(file = "Monti_WS_Sept2021_anova.csv")
+r.squaredGLMM(mod2)
+
+
+```
+
+December 2022
+
+```{r}
+load(file = "Monti_WS_Dec2022.rda")
+str(Monti_WS_Dec2022)
+
+ggplot(Monti_WS_Dec2022, aes(Disease_group,Avg)) +
+  geom_boxplot(fill = "#02b6b4", colour = "#02b6b4", alpha = 0.5) +
+  #scale_fill_manual(color = "#ee9349") +
+  scale_y_continuous(limits = c(0,0.7,0.05)) +
+  theme_bw()
+
+
+#Summary statistics (mean and standard error of each group)
+
+Monti_WS_Dec2022 %>% group_by(Disease_group) %>%
+  summarise(
+    Yield = mean(Avg),
+    sd = sd(Avg),
+    n = n(),
+    se = sd / sqrt(n)
+  )
+
+# Random effect of coral ID to test for differences between groups 
+str(Monti_WS_Dec2022)
+ 
+mod3 <- lmer(Avg ~ Disease_group + (1|Coral_ID), data = Monti_WS_Dec2022)
+plot(mod3) # fine
+summary(mod3)
+
+anova(mod3)
+
+simulationOutput <- simulateResiduals(fittedModel = mod3, plot = F)
+plot(simulationOutput)
+
+anova(mod3)
+
+anova(mod3, test = "Chisq") %>% as.data.frame() %>% write.csv(file = "Monti_WS_Dec2021_anova.csv")
+r.squaredGLMM(mod3)
+
+# Tukey HSD test:
+emmeans(mod3, list(pairwise ~ Disease_group), adjust = "tukey")
+```
+Acropora 
+
+Paling WS w TL 
+
+April 2021
+
+```{r}
+load(file = "Acro_Chronic_April2021.rda")
+str(Acro_Chronic_April2021)
+
+ggplot(Acro_Chronic_April2021, aes(Sample_ID,mean_Y)) +
+  geom_boxplot(fill = "#215c97", colour = "#215c97", alpha = 0.5) +
+  #scale_fill_manual(color = "#ee9349") +
+  scale_y_continuous(limits = c(0,0.7,0.05)) +
+  theme_bw() #+ 
+  #ggtitle("Monti GA September 2022")
+
+# Stats 
+
+#Summary statistics (mean and standard error of each group)
+
+Acro_Chronic_April2021 %>% group_by(Sample_ID) %>%
+  summarise(
+    Yield = mean(mean_Y),
+    sd = sd(mean_Y),
+    n = n(),
+    se = sd / sqrt(n)
+  )
+
+# Random effect of coral ID to test for differences between groups 
+
+ 
+mod4a <- lmer(mean_Y ~ Sample_ID + (1|Coral_ID), data = Acro_Chronic_April2021)
+
+summary(mod4a)
+
+anova(mod4a)
+
+simulationOutput <- simulateResiduals(fittedModel = mod4a, plot = F)
+plot(simulationOutput)
+
+anova(mod4a)
+
+anova(mod4a, test = "Chisq") %>% as.data.frame() %>% write.csv(file = "Acro_chronicWS_April2021_anova.csv")
+r.squaredGLMM(mod4a)
+
+# Tukey HSD test:
+emmeans(mod4a, list(pairwise ~ Sample_ID), adjust = "tukey")
+
+
+
+```
+
+
+April 2022
+
+```{r}
+
+load(file ="Acro_Chronic_April2022.rda")
+str(Acro_Chronic_April2022)
+
+ggplot(Acro_Chronic_April2022, aes(Disease_group,Avg)) +
+  geom_boxplot(fill = "#215c97", colour = "#215c97", alpha = 0.5) +
+  #scale_fill_manual(color = "#ee9349") +
+  scale_y_continuous(limits = c(0,0.7,0.05)) +
+  theme_bw() #+ 
+  #ggtitle("Monti GA September 2022")
+
+# Stats 
+
+# Summary statistics (mean and standard error of each group)
+
+Acro_Chronic_April2022 %>% group_by(Disease_group) %>%
+  summarise(
+    Yield = mean(Avg),
+    sd = sd(Avg),
+    n = n(),
+    se = sd / sqrt(n)
+  )
+
+# Anova to test for differences between groups 
+ 
+mod4 <- lm(Avg ~ Disease_group, data = Acro_Chronic_April2022)
+plot(mod4) # fine
+summary(mod4)
+
+anova(mod4) %>% as.data.frame() %>% write.csv(file = "Acro_palingWS_April2022_anova.csv")
+summary(mod4)$adj.r.squared
+
+# Tukey HSD test:
+emmeans(mod4, list(pairwise ~ Disease_group), adjust = "tukey")
+
+
+```
+
+Acropora 
+Subacute-acute
+
+April 2022
+```{r}
+
+load(file ="Acro_Acute_April2022.rda")
+str(Acro_Acute_April2022)
+
+ggplot(Acro_Acute_April2022, aes(Disease_group,Avg)) +
+  geom_boxplot(fill = "#215c97", colour = "#215c97", alpha = 0.5) +
+  #scale_fill_manual(color = "#ee9349") +
+  scale_y_continuous(limits = c(0,0.7,0.05)) +
+  theme_bw() #+ 
+  #ggtitle("Monti GA September 2022")
+
+# Stats 
+
+# Summary statistics (mean and standard error of each group)
+
+Acro_Acute_April2022 %>% group_by(Disease_group) %>%
+  summarise(
+    Yield = mean(Avg),
+    sd = sd(Avg),
+    n = n(),
+    se = sd / sqrt(n)
+  )
+
+# Anova to test for differences between groups 
+ 
+mod5 <- lm(Avg ~ Disease_group, data = Acro_Acute_April2022)
+plot(mod5) # fine
+summary(mod5)
+
+anova(mod5) %>% as.data.frame() %>% write.csv(file = "Acro_acuteWS_April2022_anova.csv")
+summary(mod5)$adj.r.squared
+
+# Tukey HSD test:
+emmeans(mod5, list(pairwise ~ Disease_group), adjust = "tukey")
+
+
+```
+
+September 2022 
+
+```{r}
+
+load(file ="Acro_Acute_Sept2022.rda")
+str(Acro_Acute_Sept2022)
+
+ggplot(Acro_Acute_Sept2022, aes(Disease_group,Avg)) +
+  geom_boxplot(fill = "#215c97", colour = "#215c97", alpha = 0.5) +
+  #scale_fill_manual(color = "#ee9349") +
+  scale_y_continuous(limits = c(0,0.7,0.05)) +
+  theme_bw() #+ 
+  #ggtitle("Monti GA September 2022")
+
+# Stats 
+
+#Summary statistics (mean and standard error of each group)
+
+Acro_Acute_Sept2022 %>% group_by(Disease_group) %>%
+  summarise(
+    Yield = mean(Avg),
+    sd = sd(Avg),
+    n = n(),
+    se = sd / sqrt(n)
+  )
+
+# Random effect of coral ID to test for differences between groups 
+str(Acro_Acute_Sept2022)
+ 
+mod6 <- lmer(Avg ~ Disease_group + (1|Coral_ID), data = Acro_Acute_Sept2022)
+
+summary(mod6)
+
+anova(mod6)
+
+simulationOutput <- simulateResiduals(fittedModel = mod6, plot = F)
+plot(simulationOutput)
+
+anova(mod6)
+
+anova(mod6, test = "Chisq") %>% as.data.frame() %>% write.csv(file = "Acro_acuteWS_Sept2023_anova.csv")
+r.squaredGLMM(mod6)
+
+# Tukey HSD test:
+emmeans(mod6, list(pairwise ~ Disease_group), adjust = "tukey")
+
+```
+
+December 2022
+
+```{r}
+
+load(file ="Acro_Acute_Dec2022.rda")
+str(Acro_Acute_Dec2022)
+
+ggplot(Acro_Acute_Dec2022, aes(Disease_group,Avg)) +
+  geom_boxplot(fill = "#215c97", colour = "#215c97", alpha = 0.5) +
+  #scale_fill_manual(color = "#ee9349") +
+  scale_y_continuous(limits = c(0,0.7,0.05)) +
+  theme_bw() #+ 
+  #ggtitle("Monti GA September 2022")
+
+#Summary statistics (mean and standard error of each group)
+
+Acro_Acute_Dec2022 %>% group_by(Disease_group) %>%
+  summarise(
+    Yield = mean(Avg),
+    sd = sd(Avg),
+    n = n(),
+    se = sd / sqrt(n)
+  )
+
+# Random effect of coral ID to test for differences between groups 
+str(Acro_Acute_Dec2022)
+
+# Stats - REDO CORAL_ID for this group!
+
+mod7 <- lmer(Avg ~ Disease_group + (1|Coral_ID), data = Acro_Acute_Dec2022)
+plot(mod7) # fine
+summary(mod7)
+
+anova(mod7)
+
+simulationOutput <- simulateResiduals(fittedModel = mod7, plot = F)
+plot(simulationOutput)
+
+anova(mod7)
+
+anova(mod7, test = "Chisq") %>% as.data.frame() %>% write.csv(file = "Acro_acuteWS_Dec2023_anova.csv")
+r.squaredGLMM(mod7)
+
+# Tukey HSD test:
+emmeans(mod7, list(pairwise ~ Disease_group), adjust = "tukey")
+```
+
+

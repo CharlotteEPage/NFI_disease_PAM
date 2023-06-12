@@ -3,15 +3,17 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-PAM plotting and analysis for 
+Prepare seperate data frames at each time point for:
 
 White Syndromes 
 - Montipora 
   1. White Syndrome 
+  2. GA
   
 - Acropora 
   1. Paling WS with tissue loss
   2. Subacute-acute WS 
+  3. GA
   
 Install packages and data
 
@@ -32,20 +34,19 @@ Data cleaning, organise into taxa and timepoint dataframes
 
 April 2021
 ```{r}
-
 # Acropora paling WS TL + GA
 
 AcroPAM <- PAM2021 %>% filter(Species == "Acro")
-AcroPAMgroup_April2021 <- AcroPAM %>% group_by(Sample_ID, Replicate) %>%
-  summarise(mean_Y = mean(Yield))
+AcroPAMgroup_April2021 <- AcroPAM %>% group_by(Sample_ID, Coral_ID,Replicate) %>%
+  summarise(mean_Y= mean(Yield))
 
 # Montipora WS
 
 MontiPAM <- PAM2021 %>% filter(Species == "Monti")
 
 str(MontiPAM)
-MontiPAMgroup_April2021 <- MontiPAM %>% group_by(Sample_ID, Replicate) %>%
-  summarise(mean_Y = mean(Yield))
+MontiPAMgroup_April2021 <- MontiPAM %>% group_by(Sample_ID,Coral_ID, Replicate) %>%
+  summarise(mean_Y= mean(Yield))
 
 ```
 ```{r}
@@ -57,6 +58,8 @@ Acro_Chronic_April2021 <- AcroPAMgroup_April2021 %>% filter(Sample_ID %in% c("Ac
 Acro_Chronic_April2021$Sample_ID <- as.factor(Acro_Chronic_April2021$Sample_ID)
 Acro_Chronic_April2021$Sample_ID <- factor(Acro_Chronic_April2021$Sample_ID ,levels = c("Acro_H","Acro_Chronic_H","Acro_Chronic_D"))
 
+save(Acro_Chronic_April2021,file = "Acro_Chronic_April2021.rda")
+
 ## Acropora GA
 
 Acro_GA_April2021 <- AcroPAMgroup_April2021 %>% filter(Sample_ID %in% c("Acro_H","Acro_GA_H","Acro_GA_D"))
@@ -64,12 +67,16 @@ Acro_GA_April2021 <- AcroPAMgroup_April2021 %>% filter(Sample_ID %in% c("Acro_H"
 Acro_GA_April2021$Sample_ID <- as.factor(Acro_GA_April2021$Sample_ID)
 Acro_GA_April2021$Sample_ID <- factor(Acro_GA_April2021$Sample_ID ,levels = c("Acro_H","Acro_GA_H","Acro_GA_D"))
 
+save(Acro_GA_April2021,file = "Acro_GA_April2021.rda")
+
 ## Montipora WS 
 
 Monti_WS_April2021 <- MontiPAMgroup_April2021%>% filter(Sample_ID %in% c("M_H","M_P1","M_P2_h"))
 #reordered for plotting
 Monti_WS_April2021$Sample_ID <- as.factor(Monti_WS_April2021$Sample_ID)
 Monti_WS_April2021$Sample_ID <- factor(Monti_WS_April2021$Sample_ID ,levels = c("M_H","M_P1","M_P2_h"))
+
+save(Monti_WS_April2021,file = "Monti_WS_April2021.rda")
 
 ```
 
@@ -91,11 +98,13 @@ MontiPAM_2022 <- PAM2022 %>% filter(Taxa == "Monti")
 ```{r}
 ## Acropora paling WS TL 
 
-Acro_Chronic_April2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","Acro_Chronic_D_D")) %>% 
+Acro_Chronic_April2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","Acro_chronic_D_D")) %>% 
   filter(TP == "April_2022")
 # reorder factor for plotting 
 Acro_Chronic_April2022$Disease_group <- as.factor(Acro_Chronic_April2022$Disease_group )
-Acro_Chronic_April2022$Disease_group  <- factor(Acro_Chronic_April2022$Disease_group ,levels = c("Acro_H","Acro_Chronic_D_D"))
+Acro_Chronic_April2022$Disease_group  <- factor(Acro_Chronic_April2022$Disease_group ,levels = c("Acro_H","Acro_chronic_D_D"))
+save(Acro_Chronic_April2022,file = "Acro_Chronic_April2022.rda")
+
 
 ## Acropora subacute-acute WS 
 
@@ -104,7 +113,8 @@ Acro_Acute_April2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","A
   filter(TP == "April_2022")
 # reorder factor for plotting 
 Acro_Acute_April2022$Disease_group <- as.factor(Acro_Acute_April2022$Disease_group )
-Acro_Acute_April2022$Disease_group  <- factor(Acro_Acute_April2022$Disease_group ,levels = c("Acro_H","Acro_Acute_D_D"))
+Acro_Acute_April2022$Disease_group  <- factor(Acro_Acute_April2022$Disease_group ,levels = c("Acro_H","Acro_acute_D_D"))
+save(Acro_Acute_April2022,file = "Acro_Acute_April2022.rda")
 
 # September 2022
 Acro_Acute_Sept2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","Acro_acute_D_H","Acro_acute_D_D")) %>% 
@@ -112,6 +122,7 @@ Acro_Acute_Sept2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","Ac
 # reorder factor for plotting 
 Acro_Acute_Sept2022$Disease_group <- as.factor(Acro_Acute_Sept2022$Disease_group )
 Acro_Acute_Sept2022$Disease_group  <- factor(Acro_Acute_Sept2022$Disease_group ,levels = c("Acro_H","Acro_acute_D_H","Acro_acute_D_D"))
+save(Acro_Acute_Sept2022,file = "Acro_Acute_Sept2022.rda")
 
 # December 2022
 Acro_Acute_Dec2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","Acro_acute_D_H","Acro_acute_D_D")) %>% 
@@ -119,6 +130,7 @@ Acro_Acute_Dec2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","Acr
 # reorder factor for plotting 
 Acro_Acute_Dec2022$Disease_group <- as.factor(Acro_Acute_Dec2022$Disease_group )
 Acro_Acute_Dec2022$Disease_group  <- factor(Acro_Acute_Dec2022$Disease_group ,levels = c("Acro_H","Acro_acute_D_H","Acro_acute_D_D"))
+save(Acro_Acute_Dec2022,file = "Acro_Acute_Dec2022.rda")
 
 ## Acropora GA
 # April 2022
@@ -127,6 +139,7 @@ Acro_GA_April2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","Acro
 # reorder factor for plotting 
 Acro_GA_April2022$Disease_group <- as.factor(Acro_GA_April2022$Disease_group )
 Acro_GA_April2022$Disease_group  <- factor(Acro_GA_April2022$Disease_group,levels = c("Acro_H","Acro_GA_D_D"))
+save(Acro_GA_April2022,file = "Acro_GA_April2022.rda")
 
 # September 2022
 Acro_GA_Sept2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","Acro_GA_D_H","Acro_GA_D_D")) %>% 
@@ -134,6 +147,7 @@ Acro_GA_Sept2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","Acro_
 # reorder factor for plotting 
 Acro_GA_Sept2022$Disease_group <- as.factor(Acro_GA_Sept2022$Disease_group )
 Acro_GA_Sept2022$Disease_group  <- factor(Acro_GA_Sept2022$Disease_group ,levels = c("Acro_H","Acro_GA_D_H","Acro_GA_D_D"))
+save(Acro_GA_Sept2022,file = "Acro_GA_Sept2022.rda")
 
 # December 2022
 Acro_GA_Dec2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","Acro_GA_D_H","Acro_GA_D_D")) %>% 
@@ -141,7 +155,7 @@ Acro_GA_Dec2022 <- AcroPAM_2022 %>% filter(Disease_group %in% c("Acro_H","Acro_G
 # reorder factor for plotting 
 Acro_GA_Dec2022$Disease_group <- as.factor(Acro_GA_Dec2022$Disease_group )
 Acro_GA_Dec2022$Disease_group  <- factor(Acro_GA_Dec2022$Disease_group ,levels = c("Acro_H","Acro_GA_D_H","Acro_GA_D_D"))
-
+save(Acro_GA_Dec2022,file = "Acro_GA_Dec2022.rda")
 
 ## Montipora WS
 # September 2022
@@ -150,6 +164,25 @@ Monti_WS_Sept2022 <- MontiPAM_2022 %>% filter(Disease_group %in% c("Monti_H","Mo
 # reorder factor for plotting 
 Monti_WS_Sept2022$Disease_group <- as.factor(Monti_WS_Sept2022$Disease_group )
 Monti_WS_Sept2022$Disease_group  <- factor(Monti_WS_Sept2022$Disease_group ,levels = c("Monti_H","Monti_D_H","Monti_D_D"))
+save(Monti_WS_Sept2022 ,file = "Monti_WS_Sept2022.rda")
+
+## Montipora WS
+# September 2022
+Monti_WS_Sept2022 <- MontiPAM_2022 %>% filter(Disease_group %in% c("Monti_H","Monti_D_H","Monti_D_D")) %>% 
+  filter(TP == "September_2022")
+# reorder factor for plotting 
+Monti_WS_Sept2022$Disease_group <- as.factor(Monti_WS_Sept2022$Disease_group )
+Monti_WS_Sept2022$Disease_group  <- factor(Monti_WS_Sept2022$Disease_group ,levels = c("Monti_H","Monti_D_H","Monti_D_D"))
+save(Monti_WS_Sept2022 ,file = "Monti_WS_Sept2022.rda")
+
+# December 2022
+Monti_WS_Dec2022 <- MontiPAM_2022 %>% filter(Disease_group %in% c("Monti_H","Monti_D_H","Monti_D_D")) %>% 
+  filter(TP == "December_2022")
+# reorder factor for plotting 
+Monti_WS_Dec2022$Disease_group <- as.factor(Monti_WS_Dec2022$Disease_group )
+Monti_WS_Dec2022$Disease_group  <- factor(Monti_WS_Dec2022$Disease_group ,levels = c("Monti_H","Monti_D_H","Monti_D_D"))
+save(Monti_WS_Dec2022 ,file = "Monti_WS_Dec2022.rda")
+
 
 ## Monti GA 
 # September 2022
@@ -158,6 +191,8 @@ Monti_GA_Sept2022 <- MontiPAM_2022 %>% filter(Disease_group %in% c("Monti_H","Mo
 # reorder factor for plotting 
 Monti_GA_Sept2022$Disease_group <- as.factor(Monti_GA_Sept2022$Disease_group )
 Monti_GA_Sept2022$Disease_group  <- factor(Monti_GA_Sept2022$Disease_group ,levels = c("Monti_H","Monti_GA_H","Monti_GA_D"))
+
+save(Monti_GA_Sept2022,file = "Monti_GA_Sept2022.rda")
 
 ```
 
